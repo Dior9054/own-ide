@@ -120,37 +120,83 @@ export default function App() {
       <div
         className="w-[100%] h-[100%] py-[100px] overflow-auto no-scroll"
         onMouseDown={(e: any) => {
-          setPos((prev: any) => {
-            return {
-              ...prev,
-              x: e.clientX,
-              y: e.clientY,
-              down: true
-            }
-          })
-        }}
-        onMouseMove={(e: any) => {
-          if (pos.down) {
+          if (!pos.content) {
             setPos((prev: any) => {
               return {
                 ...prev,
-                w: e.clientX - pos.x,
-                h: e.clientY - pos.y,
+                x: e.clientX,
+                y: e.clientY,
                 down: true
               }
             })
           }
         }}
-        onMouseUp={() => {
-          setPos((prev: any) => {
-            return {
-              ...prev,
-              down: false
+        onMouseMove={(e: any) => {
+          if (!pos.content) {
+            if (pos.down) {
+              setPos((prev: any) => {
+                return {
+                  ...prev,
+                  w: e.clientX - pos.x,
+                  h: e.clientY - pos.y,
+                  down: true
+                }
+              })
             }
-          })
+          }
+        }}
+        onMouseUp={() => {
+          if (!pos.content) {
+            setPos((prev: any) => {
+              return {
+                ...prev,
+                down: false
+              }
+            })
+          }
         }}
       >
-        <div className="w-[100%] h-[100%] bg-[white] mx-auto duration-200 transition-[width, height] relative" style={{ width: innerWidth.width, height: innerWidth.height }}>
+        <div
+          className="w-[100%] h-[100%] bg-[white] mx-auto duration-200 transition-[width, height] relative" style={{ width: innerWidth.width, height: innerWidth.height }}
+          onMouseDown={(e: any) => {
+            if (pos.content) {
+              setPos((prev: any) => {
+                return {
+                  ...prev,
+                  x: e.clientX - e.target.offsetLeft,
+                  y: e.clientY - e.target.offsetTop,
+                  down: true,
+                  w: 0,
+                  h: 0
+                }
+              })
+            }
+          }}
+          onMouseMove={(e: any) => {
+            if (pos.content) {
+              if (pos.down) {
+                setPos((prev: any) => {
+                  return {
+                    ...prev,
+                    w: e.clientX - pos.x,
+                    h: e.clientY - pos.y,
+                    down: true
+                  }
+                })
+              }
+            }
+          }}
+          onMouseUp={() => {
+            if (pos.content) {
+              setPos((prev: any) => {
+                return {
+                  ...prev,
+                  down: false
+                }
+              })
+            }
+          }}
+        >
           <div className={`w-[100px] h-[100px] top-[0] left-[0] bg-[red] ${pos.content ? "absolute" : "fixed"}`} style={{ left: pos.x, top: pos.y, width: pos.w, height: pos.h }}>
 
           </div>
